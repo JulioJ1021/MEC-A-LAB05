@@ -7,10 +7,15 @@ package linechartex;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -26,6 +31,18 @@ public class Grafs extends javax.swing.JFrame {
     int M = 0, F = 0, O = 0, A = 0, B = 0, AB = 0, NA = 0, nigga = 0, simp = 0, doble = 0;
     DefaultCategoryDataset datos = new DefaultCategoryDataset();
     DefaultPieDataset datost = new DefaultPieDataset();
+    public byte[] llenar_texto(int n){
+        String texto="";
+        if(n == 0)
+            texto = "FILTRO;GÉNERO;;TIPO DE SANGRE;;;;MULTIPLICIDAD EMBARAZO;;ETNIA";
+        if(n == 1)
+            texto = "\nCATEGORIA;MASCULINO;FEMENINO;A;B;AB;O;SIMPLE;DOBLE;NO PERTENECE;NEGRO(A), MULATO(A), AFRO COLOMBIANO(A) O AFRO DESCENDIENTE";
+        if(n == 2)
+            texto = "\nCANTIDAD;" + M + ";" + F + ";" + A + ";" + B + ";" + AB + ";" + O + ";" + simp + ";" + doble + ";" + NA + ";" + nigga;
+        if(n == 3)
+            texto = "\n\nTOP 3 TIPOS SANGRE;1. O; 2. A; 3. B";
+        return texto.getBytes();
+    }
     public void llenar_datos_bar(){
         switch(Filtro.getSelectedItem().toString()) {
             case "Etnia":
@@ -91,7 +108,6 @@ public class Grafs extends javax.swing.JFrame {
     public void Graf_barras(){
         datos.clear();
         Grafico.removeAll();
-        llenar_variables();
         llenar_datos_bar();     
         JFreeChart grafico_barras = ChartFactory.createBarChart("Nacimientos en Cali 2019", Filtro.getSelectedItem().toString(), "Cantidad", datos);
         ChartPanel panel = new ChartPanel(grafico_barras);
@@ -107,7 +123,6 @@ public class Grafs extends javax.swing.JFrame {
     public void Graf_torta(){
         datost.clear();
         Grafico.removeAll();
-        llenar_variables();
         llenar_datos_tor();     
         JFreeChart grafico_circ = ChartFactory.createPieChart("Nacimientos en Cali 2019\n" + Filtro.getSelectedItem().toString(), datost, true, true, false);
         ChartPanel panel = new ChartPanel(grafico_circ);        
@@ -166,7 +181,7 @@ public class Grafs extends javax.swing.JFrame {
 }
     public Grafs() {
         initComponents();
-        
+        llenar_variables();
         
     }
 
@@ -185,6 +200,7 @@ public class Grafs extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         Filtro = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
+        Descarga = new javax.swing.JButton();
         Grafico = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -216,25 +232,38 @@ public class Grafs extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI Emoji", 2, 15)); // NOI18N
         jLabel3.setText("Seleccione el filtro:");
 
+        Descarga.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        Descarga.setText("Descargar");
+        Descarga.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DescargaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Tipo_graf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(Filtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(63, 63, 63)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(9, 9, 9)
-                        .addComponent(jLabel2)))
-                .addContainerGap(31, Short.MAX_VALUE))
+                        .addComponent(jLabel2)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Tipo_graf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(Filtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addComponent(Descarga)
+                        .addGap(36, 36, 36))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,7 +273,8 @@ public class Grafs extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Tipo_graf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(Descarga))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Filtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -269,11 +299,8 @@ public class Grafs extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(Grafico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Grafico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -291,6 +318,7 @@ public class Grafs extends javax.swing.JFrame {
             Graf_barras();
         if(Tipo_graf.getSelectedItem().toString().equals("Circular"))
             Graf_torta();
+
     }//GEN-LAST:event_Tipo_grafActionPerformed
 
     private void FiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FiltroActionPerformed
@@ -298,7 +326,24 @@ public class Grafs extends javax.swing.JFrame {
             Graf_barras();
         if(Tipo_graf.getSelectedItem().toString().equals("Circular"))
             Graf_torta();
+        
     }//GEN-LAST:event_FiltroActionPerformed
+
+    private void DescargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DescargaActionPerformed
+        try {
+            FileOutputStream file = new FileOutputStream("data.csv");
+            String datos = "dani big d\n";
+            for(int c = 0; c < 4; c++){
+                    byte texto[] = llenar_texto(c);
+                    //datos.getBytes();            
+            file.write(texto);  
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Grafs.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (IOException ex) {
+                Logger.getLogger(Grafs.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_DescargaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,6 +381,7 @@ public class Grafs extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Descarga;
     private javax.swing.JComboBox<String> Filtro;
     private javax.swing.JPanel Grafico;
     private javax.swing.JComboBox<String> Tipo_graf;
